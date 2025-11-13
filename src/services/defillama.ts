@@ -54,17 +54,92 @@ export interface YieldToken {
 
 // Map DefiLlama symbols to SideShift coin IDs
 export let YIELD_TOKEN_MAP: Record<string, { id: string; chain: string; network: string }> = {
+  // Ethereum Liquid Staking Derivatives
   'STETH': { id: 'steth', chain: 'ethereum', network: 'ethereum' },
+  'WSTETH': { id: 'wsteth', chain: 'ethereum', network: 'ethereum' },
   'RETH': { id: 'reth', chain: 'ethereum', network: 'ethereum' },
   'CBETH': { id: 'cbeth', chain: 'ethereum', network: 'ethereum' },
   'METH': { id: 'meth', chain: 'ethereum', network: 'ethereum' },
-  'SAVAX': { id: 'savax', chain: 'avax', network: 'avax' },
+  'SFRXETH': { id: 'sfrxeth', chain: 'ethereum', network: 'ethereum' },
+  'SWETH': { id: 'sweth', chain: 'ethereum', network: 'ethereum' },
+  'OSETH': { id: 'oseth', chain: 'ethereum', network: 'ethereum' },
+  'RSWETH': { id: 'rsweth', chain: 'ethereum', network: 'ethereum' },
+  'ETHX': { id: 'ethx', chain: 'ethereum', network: 'ethereum' },
+
+  // Avalanche Staking
+  'SAVAX': { id: 'savax', chain: 'avalanche', network: 'avalanche' },
+  'YYAVAX': { id: 'yyavax', chain: 'avalanche', network: 'avalanche' },
+
+  // Solana Liquid Staking
   'JITOSOL': { id: 'jitosol', chain: 'solana', network: 'solana' },
   'BSOL': { id: 'bsol', chain: 'solana', network: 'solana' },
   'MSOL': { id: 'msol', chain: 'solana', network: 'solana' },
   'JITOSOLSTAKE': { id: 'jitosol', chain: 'solana', network: 'solana' },
   'DSOL': { id: 'bsol', chain: 'solana', network: 'solana' },
   'JUPSOL': { id: 'msol', chain: 'solana', network: 'solana' },
+  'SCNSOL': { id: 'scnsol', chain: 'solana', network: 'solana' },
+  'JSOL': { id: 'jsol', chain: 'solana', network: 'solana' },
+
+  // Stablecoins
+  'USDC': { id: 'usdc', chain: 'ethereum', network: 'ethereum' },
+  'USDT': { id: 'usdt', chain: 'ethereum', network: 'ethereum' },
+  'DAI': { id: 'dai', chain: 'ethereum', network: 'ethereum' },
+  'FRAX': { id: 'frax', chain: 'ethereum', network: 'ethereum' },
+  'USDD': { id: 'usdd', chain: 'ethereum', network: 'ethereum' },
+  'LUSD': { id: 'lusd', chain: 'ethereum', network: 'ethereum' },
+  'GUSD': { id: 'gusd', chain: 'ethereum', network: 'ethereum' },
+  'TUSD': { id: 'tusd', chain: 'ethereum', network: 'ethereum' },
+  'USDP': { id: 'usdp', chain: 'ethereum', network: 'ethereum' },
+  'BUSD': { id: 'busd', chain: 'ethereum', network: 'ethereum' },
+
+  // Wrapped Bitcoin
+  'WBTC': { id: 'wbtc', chain: 'ethereum', network: 'ethereum' },
+  'TBTC': { id: 'tbtc', chain: 'ethereum', network: 'ethereum' },
+  'RENBTC': { id: 'renbtc', chain: 'ethereum', network: 'ethereum' },
+
+  // DeFi Blue Chips with Yield
+  'AAVE': { id: 'aave', chain: 'ethereum', network: 'ethereum' },
+  'CRV': { id: 'crv', chain: 'ethereum', network: 'ethereum' },
+  'CVX': { id: 'cvx', chain: 'ethereum', network: 'ethereum' },
+  'MKR': { id: 'mkr', chain: 'ethereum', network: 'ethereum' },
+  'COMP': { id: 'comp', chain: 'ethereum', network: 'ethereum' },
+  'UNI': { id: 'uni', chain: 'ethereum', network: 'ethereum' },
+  'SUSHI': { id: 'sushi', chain: 'ethereum', network: 'ethereum' },
+  'BAL': { id: 'bal', chain: 'ethereum', network: 'ethereum' },
+  'LDO': { id: 'ldo', chain: 'ethereum', network: 'ethereum' },
+  'RPL': { id: 'rpl', chain: 'ethereum', network: 'ethereum' },
+
+  // Layer 2 Tokens
+  'ARB': { id: 'arb', chain: 'arbitrum', network: 'arbitrum' },
+  'OP': { id: 'op', chain: 'optimism', network: 'optimism' },
+  'MATIC': { id: 'matic', chain: 'polygon', network: 'polygon' },
+
+  // Cosmos Ecosystem
+  'ATOM': { id: 'atom', chain: 'cosmos', network: 'cosmos' },
+  'OSMO': { id: 'osmo', chain: 'osmosis', network: 'osmosis' },
+  'INJ': { id: 'inj', chain: 'injective', network: 'injective' },
+  'TIA': { id: 'tia', chain: 'celestia', network: 'celestia' },
+  'JUNO': { id: 'juno', chain: 'juno', network: 'juno' },
+  'KUJI': { id: 'kuji', chain: 'kujira', network: 'kujira' },
+
+  // Solana DeFi
+  'JTO': { id: 'jto', chain: 'solana', network: 'solana' },
+  'JUP': { id: 'jup', chain: 'solana', network: 'solana' },
+  'BONK': { id: 'bonk', chain: 'solana', network: 'solana' },
+  'RAY': { id: 'ray', chain: 'solana', network: 'solana' },
+  'ORCA': { id: 'orca', chain: 'solana', network: 'solana' },
+  'MNGO': { id: 'mngo', chain: 'solana', network: 'solana' },
+
+  // Binance Smart Chain
+  'BNB': { id: 'bnb', chain: 'bsc', network: 'bsc' },
+  'CAKE': { id: 'cake', chain: 'bsc', network: 'bsc' },
+
+  // Other Chains
+  'AVAX': { id: 'avax', chain: 'avalanche', network: 'avalanche' },
+  'FTM': { id: 'ftm', chain: 'fantom', network: 'fantom' },
+  'NEAR': { id: 'near', chain: 'near', network: 'near' },
+  'DOT': { id: 'dot', chain: 'polkadot', network: 'polkadot' },
+  'KSM': { id: 'ksm', chain: 'kusama', network: 'kusama' },
 };
 
 // Fetch all yield pools from DefiLlama

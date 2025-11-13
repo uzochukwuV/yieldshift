@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowUpRight, TrendingUp, Loader2, RefreshCw } from 'lucide-react';
+import { ArrowUpRight, TrendingUp, Loader2, RefreshCw, Info, Sparkles, Shield, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { getCoins } from '../services/sideshift';
 import { getSupportedYieldTokens, formatApy, formatTvl, type YieldToken } from '../services/defillama';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import {
   Table,
   TableBody,
@@ -16,7 +18,12 @@ import {
 } from '../components/ui/table';
 import { SwapModal } from '../components/SwapModal';
 import { Navbar } from '../components/Navbar';
-import { AllCoinsTable } from './AllCoins';
+
+const getApyColor = (apy: number) => {
+  if (apy >= 10) return 'text-green-600 dark:text-green-400';
+  if (apy >= 5) return 'text-emerald-600 dark:text-emerald-400';
+  return 'text-blue-600 dark:text-blue-400';
+};
 
 export default function Dashboard() {
   const [selectedToken, setSelectedToken] = useState<YieldToken | null>(null);
@@ -59,14 +66,31 @@ export default function Dashboard() {
       <Navbar />
 
       {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto max-w-7xl px-4 py-6">
-          <div className="flex items-center justify-between">
+      <header className="border-b border-border bg-gradient-to-br from-background via-background to-muted/20">
+        <div className="mx-auto max-w-7xl px-4 py-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-between"
+          >
             <div>
-              <h1 className="text-3xl font-bold text-foreground">YieldShift Dashboard</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                One-Click Yield Entry - Swap to Earn
+              <h1 className="text-4xl font-bold text-foreground">
+                Discover Top DeFi Yields
+              </h1>
+              <p className="mt-2 text-base text-muted-foreground">
+                Browse high-yield opportunities and swap into them from any crypto you own
               </p>
+              <div className="mt-3 flex items-center gap-2">
+                <Badge variant="outline" className="gap-1">
+                  <Sparkles className="h-3 w-3" />
+                  Live data from DefiLlama
+                </Badge>
+                <Badge variant="outline" className="gap-1">
+                  <Zap className="h-3 w-3" />
+                  Instant cross-chain swaps
+                </Badge>
+              </div>
             </div>
             <Button
               variant="outline"
@@ -81,74 +105,107 @@ export default function Dashboard() {
               )}
               <span className="ml-2">Refresh</span>
             </Button>
-          </div>
+          </motion.div>
         </div>
       </header>
+
+      {/* Info Alert */}
+      <div className="mx-auto max-w-7xl px-4 py-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Alert className="bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border-blue-500/20">
+            <Info className="h-4 w-4" />
+            <AlertTitle>How It Works</AlertTitle>
+            <AlertDescription>
+              <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:gap-6">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-xs font-bold">1</div>
+                  <span className="text-sm">Browse yields below</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-xs font-bold">2</div>
+                  <span className="text-sm">Click "Swap & Earn"</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-xs font-bold">3</div>
+                  <span className="text-sm">Send any crypto, receive yield tokens</span>
+                </div>
+              </div>
+            </AlertDescription>
+          </Alert>
+        </motion.div>
+      </div>
 
       {/* Stats Cards */}
       <div className="mx-auto max-w-7xl px-4 py-6">
         <div className="grid gap-4 md:grid-cols-3">
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Opportunities</p>
-                <p className="mt-2 text-3xl font-bold text-foreground">
-                  {yieldTokens?.length || 0}
-                </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Card className="p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Opportunities</p>
+                  <p className="mt-2 text-3xl font-bold text-foreground">
+                    {yieldTokens?.length || 0}
+                  </p>
+                </div>
+                <div className="rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-3">
+                  <TrendingUp className="h-6 w-6 text-blue-600" />
+                </div>
               </div>
-              <div className="rounded-full bg-primary/10 p-3">
-                <TrendingUp className="h-6 w-6 text-primary" />
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
 
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Highest APY</p>
-                <p className="mt-2 text-3xl font-bold text-accent">
-                  {yieldTokens && yieldTokens.length > 0
-                    ? formatApy(yieldTokens[0].totalApy)
-                    : '0%'}
-                </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Card className="p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Highest APY</p>
+                  <p className="mt-2 text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                    {yieldTokens && yieldTokens.length > 0
+                      ? formatApy(yieldTokens[0].totalApy)
+                      : '0%'}
+                  </p>
+                </div>
+                <div className="rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-3">
+                  <ArrowUpRight className="h-6 w-6 text-green-600" />
+                </div>
               </div>
-              <div className="rounded-full bg-accent/10 p-3">
-                <ArrowUpRight className="h-6 w-6 text-accent" />
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
 
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total TVL</p>
-                <p className="mt-2 text-3xl font-bold text-foreground">
-                  {yieldTokens
-                    ? formatTvl(yieldTokens.reduce((sum, t) => sum + t.tvlUsd, 0))
-                    : '$0'}
-                </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <Card className="p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total TVL</p>
+                  <p className="mt-2 text-3xl font-bold text-foreground">
+                    {yieldTokens
+                      ? formatTvl(yieldTokens.reduce((sum, t) => sum + t.tvlUsd, 0))
+                      : '$0'}
+                  </p>
+                </div>
+                <div className="rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-3">
+                  <TrendingUp className="h-6 w-6 text-purple-600" />
+                </div>
               </div>
-              <div className="rounded-full bg-secondary p-3">
-                <TrendingUp className="h-6 w-6 text-secondary-foreground" />
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
         </div>
-      </div>
-
-      {/* All Coins Table */}
-      <div className="mx-auto max-w-7xl px-4 py-6">
-        <Card>
-          <div className="p-6">
-            <h2 className="text-xl font-semibold text-foreground">All Supported Coins</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Browse all coins available for swapping on SideShift
-            </p>
-          </div>
-          <div className="px-6 pb-6">
-            <AllCoinsTable />
-          </div>
-        </Card>
       </div>
 
       {/* Yield Tokens Table */}
@@ -206,7 +263,7 @@ export default function Dashboard() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex flex-col items-end">
-                          <span className="font-semibold text-accent">
+                          <span className={`font-bold text-lg ${getApyColor(token.totalApy)}`}>
                             {formatApy(token.totalApy)}
                           </span>
                           {token.apyReward > 0 && (
@@ -223,7 +280,7 @@ export default function Dashboard() {
                         <Button
                           size="sm"
                           onClick={() => handleSwapClick(token)}
-                          className="bg-primary hover:bg-primary/90"
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                         >
                           Swap & Earn
                           <ArrowUpRight className="ml-1 h-4 w-4" />
