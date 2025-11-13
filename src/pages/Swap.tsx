@@ -100,6 +100,18 @@ export default function Swap() {
         affiliateId: import.meta.env.VITE_SIDESHIFT_AFFILIATE_ID || '',
       });
 
+      // Save order ID to portfolio
+      try {
+        const stored = localStorage.getItem('yieldshift_portfolio_orders');
+        const orderIds = stored ? JSON.parse(stored) : [];
+        if (!orderIds.includes(order.id)) {
+          orderIds.push(order.id);
+          localStorage.setItem('yieldshift_portfolio_orders', JSON.stringify(orderIds));
+        }
+      } catch (error) {
+        console.error('Failed to save order to portfolio:', error);
+      }
+
       toast({
         title: 'Swap Created!',
         description: `Order ID: ${order.id}. Send ${depositAmount} ${depositCoin.toUpperCase()} to the deposit address.`,

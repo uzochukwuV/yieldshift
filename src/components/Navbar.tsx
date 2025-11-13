@@ -1,27 +1,29 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeftRight, BarChart3, ListOrdered } from 'lucide-react';
+import { ArrowLeftRight, BarChart3, ListOrdered, Sparkles, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 
 export function Navbar() {
   const location = useLocation();
 
   return (
-    <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+    <nav className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-semibold text-xl">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-primary-foreground" />
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <span className="hidden sm:inline">YieldShift</span>
+            <span className="hidden sm:inline bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              YieldShift
+            </span>
           </Link>
 
           {/* Navigation Links */}
           <div className="flex items-center gap-2">
-            <Link to="/">
+            <Link to="/dashboard">
               <Button
-                variant={location.pathname === '/' ? 'default' : 'ghost'}
+                variant={location.pathname === '/dashboard' ? 'default' : 'ghost'}
                 size="sm"
                 className="gap-2"
               >
@@ -29,7 +31,18 @@ export function Navbar() {
                 <span className="hidden sm:inline">Dashboard</span>
               </Button>
             </Link>
-            
+
+            <Link to="/portfolio">
+              <Button
+                variant={location.pathname === '/portfolio' ? 'default' : 'ghost'}
+                size="sm"
+                className="gap-2"
+              >
+                <Wallet className="w-4 h-4" />
+                <span className="hidden sm:inline">Portfolio</span>
+              </Button>
+            </Link>
+
             <Link to="/orders">
               <Button
                 variant={location.pathname === '/orders' ? 'default' : 'ghost'}
@@ -43,9 +56,8 @@ export function Navbar() {
 
             <Link to="/swap">
               <Button
-                variant="default"
                 size="sm"
-                className="gap-2 bg-primary hover:bg-primary/90"
+                className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <ArrowLeftRight className="w-4 h-4" />
                 <span>Swap</span>
