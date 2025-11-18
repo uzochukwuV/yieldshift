@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
 import Swap from './pages/Swap';
 import Portfolio from './pages/Portfolio';
+import Compare from './pages/Compare';
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/orders" element={<Orders />} />
           <Route path="/swap" element={<Swap />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/compare" element={<Compare />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

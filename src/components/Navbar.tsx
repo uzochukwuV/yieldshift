@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeftRight, BarChart3, ListOrdered, Sparkles, Wallet } from 'lucide-react';
+import { ArrowLeftRight, BarChart3, ListOrdered, Sparkles, Wallet, Scale } from 'lucide-react';
 import { Button } from './ui/button';
 
 export function Navbar() {
@@ -40,6 +40,17 @@ export function Navbar() {
               >
                 <Wallet className="w-4 h-4" />
                 <span className="hidden sm:inline">Portfolio</span>
+              </Button>
+            </Link>
+
+            <Link to="/compare">
+              <Button
+                variant={location.pathname === '/compare' ? 'default' : 'ghost'}
+                size="sm"
+                className="gap-2"
+              >
+                <Scale className="w-4 h-4" />
+                <span className="hidden sm:inline">Compare</span>
               </Button>
             </Link>
 
