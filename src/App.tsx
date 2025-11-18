@@ -11,6 +11,7 @@ import Portfolio from './pages/Portfolio';
 import Compare from './pages/Compare';
 import Pricing from './pages/Pricing';
 import Account from './pages/Account';
+import Recommendations from './pages/Recommendations';
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/compare" element={<Compare />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/recommendations" element={<Recommendations />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

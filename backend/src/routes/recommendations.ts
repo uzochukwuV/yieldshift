@@ -1,6 +1,15 @@
 import express from 'express';
 import { requireAuth, loadUser, requirePlan, checkRebalanceLimit } from '../middleware/auth';
 import { supabase } from '../db';
+import {
+  generateRecommendations,
+  saveRecommendations,
+} from '../services/ai-recommendations';
+import {
+  executeRebalance,
+  simulateRebalance,
+  batchExecuteRebalances,
+} from '../services/rebalancing';
 
 const router = express.Router();
 
@@ -24,12 +33,29 @@ router.get('/', requireAuth, loadUser, requirePlan('starter'), async (req, res) 
 // POST /api/recommendations/generate - Generate new recommendations (Starter+)
 router.post('/generate', requireAuth, loadUser, requirePlan('starter'), async (req, res) => {
   try {
-    // TODO: Implement AI recommendation generation
-    // This would call the AI service to analyze portfolio and find better yields
+    const user = req.user;
 
-    res.json({ message: 'Recommendations generated' });
+    // Clear old pending recommendations
+    await supabase
+      .from('recommendations')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('status', 'pending');
+
+    // Generate AI recommendations
+    const result = await generateRecommendations(user.id, user.risk_tolerance);
+
+    // Save to database
+    const saved = await saveRecommendations(user.id, result.recommendations);
+
+    res.json({
+      message: 'Recommendations generated successfully',
+      count: saved.length,
+      recommendations: saved,
+    });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    console.error('Error generating recommendations:', error);
+    res.status(500).json({ error: error.message || 'Failed to generate recommendations' });
   }
 });
 
@@ -37,6 +63,11 @@ router.post('/generate', requireAuth, loadUser, requirePlan('starter'), async (r
 router.post('/:id/execute', requireAuth, loadUser, checkRebalanceLimit, async (req, res) => {
   try {
     const { id } = req.params;
+    const { wallet_address } = req.body;
+
+    if (!wallet_address) {
+      return res.status(400).json({ error: 'wallet_address is required' });
+    }
 
     // Get recommendation
     const { data: rec, error: recError } = await supabase
@@ -54,21 +85,63 @@ router.post('/:id/execute', requireAuth, loadUser, checkRebalanceLimit, async (r
       return res.status(400).json({ error: 'Recommendation already processed' });
     }
 
-    // TODO: Implement rebalancing logic
-    // 1. Unstake from current position
-    // 2. Swap via SideShift
-    // 3. Stake in new position
-    // 4. Update database
+    // Execute rebalancing
+    const result = await executeRebalance(id, wallet_address);
 
-    // Update rebalance count for the month
-    const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
-    await supabase.from('rebalance_history').upsert({
-      user_id: req.user.id,
-      month: currentMonth,
-      count: supabase.rpc('increment', { row_id: `${req.user.id}-${currentMonth}` }),
+    if (!result.success) {
+      return res.status(400).json({ error: result.error });
+    }
+
+    res.json({
+      message: 'Rebalance initiated successfully',
+      order: result.order,
+      recommendation: rec,
     });
+  } catch (error: any) {
+    console.error('Error executing rebalance:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-    res.json({ message: 'Rebalance executed', recommendation: rec });
+// POST /api/recommendations/:id/simulate - Simulate rebalance (Starter+)
+router.post('/:id/simulate', requireAuth, loadUser, requirePlan('starter'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Verify recommendation belongs to user
+    const { data: rec } = await supabase
+      .from('recommendations')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (!rec) {
+      return res.status(404).json({ error: 'Recommendation not found' });
+    }
+
+    const simulation = await simulateRebalance(id);
+    res.json(simulation);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/recommendations/batch-execute - Execute multiple recommendations (Professional+)
+router.post('/batch-execute', requireAuth, loadUser, requirePlan('professional'), async (req, res) => {
+  try {
+    const { recommendation_ids, wallet_address } = req.body;
+
+    if (!Array.isArray(recommendation_ids) || recommendation_ids.length === 0) {
+      return res.status(400).json({ error: 'recommendation_ids array is required' });
+    }
+
+    if (!wallet_address) {
+      return res.status(400).json({ error: 'wallet_address is required' });
+    }
+
+    const result = await batchExecuteRebalances(recommendation_ids, wallet_address);
+    res.json(result);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

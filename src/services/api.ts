@@ -85,8 +85,39 @@ class ApiClient {
     return data;
   }
 
-  async executeRecommendation(id: string) {
-    const { data } = await this.client.post(`/api/recommendations/${id}/execute`);
+  async executeRecommendation(id: string, walletAddress: string) {
+    const { data } = await this.client.post(`/api/recommendations/${id}/execute`, {
+      wallet_address: walletAddress,
+    });
+    return data;
+  }
+
+  async simulateRecommendation(id: string) {
+    const { data } = await this.client.post(`/api/recommendations/${id}/simulate`);
+    return data;
+  }
+
+  async batchExecuteRecommendations(ids: string[], walletAddress: string) {
+    const { data } = await this.client.post('/api/recommendations/batch-execute', {
+      recommendation_ids: ids,
+      wallet_address: walletAddress,
+    });
+    return data;
+  }
+
+  // Wallet endpoints (enhanced)
+  async connectWallet(address: string, chain: string, nickname?: string) {
+    const { data } = await this.client.post('/api/wallets', { address, chain, nickname });
+    return data;
+  }
+
+  async scanWallet(walletId: string) {
+    const { data } = await this.client.post(`/api/wallets/${walletId}/scan`);
+    return data;
+  }
+
+  async getWalletPositions(walletId: string) {
+    const { data } = await this.client.get(`/api/wallets/${walletId}/positions`);
     return data;
   }
 }
