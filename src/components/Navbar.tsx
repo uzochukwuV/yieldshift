@@ -1,9 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeftRight, BarChart3, ListOrdered, Sparkles, Wallet, Scale } from 'lucide-react';
+import { ArrowLeftRight, BarChart3, ListOrdered, Sparkles, Wallet, Scale, User, LogOut, Settings } from 'lucide-react';
+import { SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/clerk-react';
 import { Button } from './ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 export function Navbar() {
   const location = useLocation();
+  const { isSignedIn } = useAuth();
 
   return (
     <nav className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -74,6 +84,41 @@ export function Navbar() {
                 <span>Swap</span>
               </Button>
             </Link>
+
+            {/* User Menu */}
+            <div className="ml-2 border-l border-border pl-2">
+              {isSignedIn ? (
+                <UserButton
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: 'w-8 h-8',
+                    },
+                  }}
+                >
+                  <UserButton.MenuItems>
+                    <UserButton.Link
+                      label="Account Settings"
+                      labelIcon={<Settings className="w-4 h-4" />}
+                      href="/account"
+                    />
+                  </UserButton.MenuItems>
+                </UserButton>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <SignInButton mode="modal">
+                    <Button variant="ghost" size="sm">
+                      Sign In
+                    </Button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <Button size="sm">
+                      Sign Up
+                    </Button>
+                  </SignUpButton>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

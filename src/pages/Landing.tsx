@@ -8,7 +8,8 @@ import {
   Layers,
   ArrowUpRight,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  Check
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
@@ -85,12 +86,15 @@ export default function Landing() {
               </span>
             </div>
             <div className="flex items-center gap-4">
+              <Link to="/pricing">
+                <Button variant="ghost">Pricing</Button>
+              </Link>
               <Link to="/dashboard">
                 <Button variant="ghost">Browse Yields</Button>
               </Link>
               <Link to="/dashboard">
                 <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                  Get Started
+                  Get Started Free
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
@@ -337,6 +341,73 @@ export default function Landing() {
               <Link to="/dashboard">
                 <Button variant="outline" size="lg">
                   View All Opportunities
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Pricing Teaser */}
+      <section className="relative py-24 sm:py-32 bg-muted/30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="text-center"
+          >
+            <motion.h2
+              variants={fadeInUp}
+              className="text-3xl font-bold tracking-tight sm:text-4xl"
+            >
+              Choose Your Plan
+            </motion.h2>
+            <motion.p
+              variants={fadeInUp}
+              className="mt-4 text-lg text-muted-foreground"
+            >
+              From free exploration to full AI automation
+            </motion.p>
+
+            <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { name: 'Free', price: '$0', features: ['Browse yields', 'Manual swaps', 'Track 5 orders'] },
+                { name: 'Starter', price: '$100', features: ['AI recommendations', '4 rebalances/mo', 'Analytics'], popular: true },
+                { name: 'Professional', price: '$500', features: ['Unlimited rebalancing', '5 wallets', 'Tax reports'] },
+                { name: 'Institutional', price: 'Custom', features: ['Unlimited wallets', 'Multi-sig', '24/7 support'] },
+              ].map((plan, i) => (
+                <motion.div key={plan.name} variants={fadeInUp}>
+                  <Card className={`p-6 h-full ${plan.popular ? 'border-2 border-blue-500 relative' : ''}`}>
+                    {plan.popular && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                        <Badge className="bg-gradient-to-r from-blue-600 to-purple-600">Most Popular</Badge>
+                      </div>
+                    )}
+                    <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                    <div className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      {plan.price}
+                      {plan.price !== 'Custom' && <span className="text-sm text-muted-foreground">/mo</span>}
+                    </div>
+                    <ul className="space-y-2 mb-6">
+                      {plan.features.map((f) => (
+                        <li key={f} className="flex items-center gap-2 text-sm">
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div variants={fadeInUp} className="mt-12">
+              <Link to="/pricing">
+                <Button size="lg" variant="outline">
+                  View Full Pricing & Features
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
