@@ -153,3 +153,32 @@ CREATE POLICY "Users can insert own wallets" ON wallets
 -- Seed data (optional - for development)
 -- INSERT INTO users (email, clerk_id, subscription_tier) VALUES
 --   ('demo@yieldshift.com', 'demo_user_123', 'professional');
+
+-- Vault Deposits table (for tracking user vault deposits)
+CREATE TABLE IF NOT EXISTS vault_deposits (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  tx_hash VARCHAR NOT NULL UNIQUE,
+  amount DECIMAL NOT NULL,
+  shares DECIMAL DEFAULT 0,
+  status VARCHAR DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'failed')),
+  chain VARCHAR DEFAULT 'base',
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create index on user_id for faster queries
+CREATE INDEX idx_vault_deposits_user_id ON vault_deposits(user_id);
+CREATE INDEX idx_vault_deposits_tx_hash ON vault_deposits(tx_hash);
+CREATE INDEX idx_vault_deposits_status ON vault_deposits(status);
+
+-- Add vault deposit tracking to existing schema
+-- Row Level Security
+ALTER TABLE vault_deposits ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own vault deposits" ON vault_deposits
+  FOR SELECT USING (auth.uid()::text = (SELECT clerk_id FROM users WHERE id = vault_deposits.user_id));
+
+CREATE POLICY "Users can insert own vault deposits" ON vault_deposits
+  FOR INSERT WITH CHECK (auth.uid()::text = (SELECT clerk_id FROM users WHERE id = vault_deposits.user_id));
+

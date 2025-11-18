@@ -6,6 +6,7 @@ import walletsRoutes from './routes/wallets';
 import subscriptionsRoutes from './routes/subscriptions';
 import recommendationsRoutes from './routes/recommendations';
 import positionsRoutes from './routes/positions';
+import vaultRoutes from './routes/vault';
 import './jobs/sync-positions'; // Start background jobs
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use('/api/wallets', walletsRoutes);
 app.use('/api/subscriptions', subscriptionsRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/positions', positionsRoutes);
+app.use('/api/vault', vaultRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

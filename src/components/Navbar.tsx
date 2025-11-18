@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeftRight, BarChart3, ListOrdered, Sparkles, Wallet, Scale, User, LogOut, Settings, Zap } from 'lucide-react';
+import { ArrowLeftRight, BarChart3, ListOrdered, Sparkles, Wallet, Scale, User, LogOut, Settings, Zap, DollarSign } from 'lucide-react';
 import { SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/clerk-react';
 import { Button } from './ui/button';
 import {
@@ -39,6 +39,17 @@ export function Navbar() {
               >
                 <BarChart3 className="w-4 h-4" />
                 <span className="hidden sm:inline">Dashboard</span>
+              </Button>
+            </Link>
+
+            <Link to="/vault">
+              <Button
+                variant={location.pathname === '/vault' ? 'default' : 'ghost'}
+                size="sm"
+                className="gap-2"
+              >
+                <DollarSign className="w-4 h-4" />
+                <span className="hidden sm:inline">Vault</span>
               </Button>
             </Link>
 

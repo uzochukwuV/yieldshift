@@ -12,6 +12,7 @@ import Compare from './pages/Compare';
 import Pricing from './pages/Pricing';
 import Account from './pages/Account';
 import Recommendations from './pages/Recommendations';
+import Vault from './pages/Vault';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/vault" element={<Vault />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/swap" element={<Swap />} />
             <Route path="/portfolio" element={<Portfolio />} />
